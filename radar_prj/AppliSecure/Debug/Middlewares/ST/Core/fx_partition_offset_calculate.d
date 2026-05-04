@@ -1,0 +1,10 @@
+Middlewares/ST/Core/fx_partition_offset_calculate.o: \
+ D:/radar-ai-detector/radar_prj/Middlewares/ST/filex/common/src/fx_partition_offset_calculate.c \
+ ../../Middlewares/ST/filex/common/inc/fx_api.h \
+ ../../Middlewares/ST/filex/ports/generic/inc/fx_port.h \
+ ../FileX/App/fx_user.h \
+ ../../Middlewares/ST/filex/common/inc/fx_utility.h
+../../Middlewares/ST/filex/common/inc/fx_api.h:
+../../Middlewares/ST/filex/ports/generic/inc/fx_port.h:
+../FileX/App/fx_user.h:
+../../Middlewares/ST/filex/common/inc/fx_utility.h:

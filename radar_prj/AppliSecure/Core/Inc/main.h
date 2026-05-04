@@ -80,14 +80,26 @@ void Error_Handler(void);
 /* Private defines -----------------------------------------------------------*/
 #define OSC_IN_Pin GPIO_PIN_0
 #define OSC_IN_GPIO_Port GPIOH
+#define SD_D0_Pin GPIO_PIN_4
+#define SD_D0_GPIO_Port GPIOC
 #define OSC_OUT_Pin GPIO_PIN_1
 #define OSC_OUT_GPIO_Port GPIOH
+#define SD_D1_Pin GPIO_PIN_5
+#define SD_D1_GPIO_Port GPIOC
 #define PSUEN_Pin GPIO_PIN_9
 #define PSUEN_GPIO_Port GPIOC
+#define SD_D2_Pin GPIO_PIN_0
+#define SD_D2_GPIO_Port GPIOC
 #define VCP_TX_Pin GPIO_PIN_5
 #define VCP_TX_GPIO_Port GPIOE
+#define SD_CK_Pin GPIO_PIN_2
+#define SD_CK_GPIO_Port GPIOC
+#define SD_D3_Pin GPIO_PIN_4
+#define SD_D3_GPIO_Port GPIOE
 #define VCP_RX_Pin GPIO_PIN_6
 #define VCP_RX_GPIO_Port GPIOE
+#define SD_CMD_Pin GPIO_PIN_3
+#define SD_CMD_GPIO_Port GPIOC
 #define SYNC_RESET_Pin GPIO_PIN_3
 #define SYNC_RESET_GPIO_Port GPIOB
 #define ADC_SPI_CS1_Pin GPIO_PIN_3

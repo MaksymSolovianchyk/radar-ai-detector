@@ -1,0 +1,5 @@
+../Core/Src/sd_logger.c:47:18:SD_Logger_Init	40	static
+../Core/Src/sd_logger.c:87:18:SD_Logger_Write	288	static
+../Core/Src/sd_logger.c:140:6:SD_Logger_Flush	8	static
+../Core/Src/sd_logger.c:150:6:SD_Logger_IsReady	4	static
+../Core/Src/sd_logger.c:156:10:SD_Logger_GetRowCount	4	static
