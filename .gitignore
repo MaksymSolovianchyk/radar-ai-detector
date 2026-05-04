@@ -1,0 +1,21 @@
+# Virtual environments
+venv/
+st_zoo*/
+.venv/
+custom_ai_model/radar_venv/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+
+# macOS
+.idea/
+.DS_Store
+
+# STM / ML outputs
+**/experiments_outputs/
+**/mlruns/
+logs/
+saved_models/
+.DS_Store

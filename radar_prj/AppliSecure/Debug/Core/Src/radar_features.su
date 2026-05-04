@@ -1,0 +1,2 @@
+../Core/Src/radar_features.c:29:6:RadarFeatures_Compute	80	static
+../Core/Src/radar_features.c:132:6:RadarFeatures_Print	344	static

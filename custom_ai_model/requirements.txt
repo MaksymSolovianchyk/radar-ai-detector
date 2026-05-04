@@ -1,0 +1,13 @@
+# radar_ai_training — Python dependencies
+# Install with:  pip install -r requirements.txt
+
+# Core ML
+tensorflow>=2.13.0          # includes tf.lite for TFLite export
+
+# Data & numerics
+numpy>=1.24.0
+scikit-learn>=1.3.0         # confusion_matrix, classification_report
+
+# Plotting
+matplotlib>=3.7.0
+seaborn>=0.12.0             # confusion matrix heatmap

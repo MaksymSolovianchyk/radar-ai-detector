@@ -1,0 +1,8 @@
+../Core/Src/radar.c:51:6:ADS_Init	3
+../Core/Src/radar.c:64:6:ResetTXBuffer	1
+../Core/Src/radar.c:68:6:DrdyPulseCallback	1
+../Core/Src/radar.c:73:6:DrdyExti	2
+../Core/Src/radar.c:82:6:BuffMemCopy	1
+../Core/Src/radar.c:86:6:UartStartSend	1
+../Core/Src/radar.c:97:6:UartStartReceive	1
+../Core/Src/radar.c:101:6:UartRxcallback	1
