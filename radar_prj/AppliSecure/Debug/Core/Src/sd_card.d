@@ -1,4 +1,4 @@
-Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
+Core/Src/sd_card.o: ../Core/Src/sd_card.c ../Core/Inc/sd_card.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../Core/Inc/stm32n6xx_hal_conf.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h \
@@ -32,9 +32,8 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi_ex.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart.h \
- ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart_ex.h \
- ../Core/Inc/radar.h ../Core/Inc/ads131m0x.h ../Core/Inc/radar.h
-../Core/Inc/main.h:
+ ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart_ex.h
+../Core/Inc/sd_card.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../Core/Inc/stm32n6xx_hal_conf.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h:
@@ -69,6 +68,3 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi_ex.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart_ex.h:
-../Core/Inc/radar.h:
-../Core/Inc/ads131m0x.h:
-../Core/Inc/radar.h:

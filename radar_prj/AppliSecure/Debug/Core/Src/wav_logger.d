@@ -1,5 +1,5 @@
-Core/Src/sd_logger.o: ../Core/Src/sd_logger.c ../Core/Inc/sd_logger.h \
- ../Core/Inc/radar_features.h \
+Core/Src/wav_logger.o: ../Core/Src/wav_logger.c ../Core/Inc/wav_logger.h \
+ ../Core/Inc/sd_card.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../Core/Inc/stm32n6xx_hal_conf.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h \
@@ -34,9 +34,9 @@ Core/Src/sd_logger.o: ../Core/Src/sd_logger.c ../Core/Inc/sd_logger.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi_ex.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart_ex.h \
- ../Core/Inc/ff.h ../Core/Inc/ffconf.h ../Core/Inc/main.h
-../Core/Inc/sd_logger.h:
-../Core/Inc/radar_features.h:
+ ../Core/Inc/ff.h ../Core/Inc/ffconf.h
+../Core/Inc/wav_logger.h:
+../Core/Inc/sd_card.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../Core/Inc/stm32n6xx_hal_conf.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h:
@@ -73,4 +73,3 @@ Core/Src/sd_logger.o: ../Core/Src/sd_logger.c ../Core/Inc/sd_logger.h \
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart_ex.h:
 ../Core/Inc/ff.h:
 ../Core/Inc/ffconf.h:
-../Core/Inc/main.h:
