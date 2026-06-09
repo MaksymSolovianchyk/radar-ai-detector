@@ -1,3 +1,3 @@
-D:/radar_ai_detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_spi_ex.c:74:19:HAL_SPIEx_FlushRxFifo	13
-D:/radar_ai_detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_spi_ex.c:113:19:HAL_SPIEx_EnableLockConfiguration	4
-D:/radar_ai_detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_spi_ex.c:162:19:HAL_SPIEx_ConfigureUnderrun	5
+D:/radar-ai-detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_spi_ex.c:74:19:HAL_SPIEx_FlushRxFifo	13
+D:/radar-ai-detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_spi_ex.c:113:19:HAL_SPIEx_EnableLockConfiguration	4
+D:/radar-ai-detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_spi_ex.c:162:19:HAL_SPIEx_ConfigureUnderrun	5

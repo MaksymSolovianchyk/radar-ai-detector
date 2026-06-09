@@ -1,0 +1,12 @@
+Middlewares/ST/Core/fx_unicode_directory_entry_change.o: \
+ D:/radar-ai-detector/radar_prj/Middlewares/ST/filex/common/src/fx_unicode_directory_entry_change.c \
+ ../../Middlewares/ST/filex/common/inc/fx_api.h \
+ ../../Middlewares/ST/filex/ports/generic/inc/fx_port.h \
+ ../FileX/App/fx_user.h \
+ ../../Middlewares/ST/filex/common/inc/fx_unicode.h \
+ ../../Middlewares/ST/filex/common/inc/fx_utility.h
+../../Middlewares/ST/filex/common/inc/fx_api.h:
+../../Middlewares/ST/filex/ports/generic/inc/fx_port.h:
+../FileX/App/fx_user.h:
+../../Middlewares/ST/filex/common/inc/fx_unicode.h:
+../../Middlewares/ST/filex/common/inc/fx_utility.h:

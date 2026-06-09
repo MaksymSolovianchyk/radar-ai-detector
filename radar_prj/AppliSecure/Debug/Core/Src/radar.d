@@ -26,6 +26,10 @@ Core/Src/radar.o: ../Core/Src/radar.c ../Core/Inc/ads131m0x.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_exti.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_pwr.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_pwr_ex.h \
+ ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_sd.h \
+ ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_ll_sdmmc.h \
+ ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_ll_dlyb.h \
+ ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_sd_ex.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi_ex.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart.h \
@@ -59,6 +63,10 @@ Core/Src/radar.o: ../Core/Src/radar.c ../Core/Inc/ads131m0x.h \
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_exti.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_pwr.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_pwr_ex.h:
+../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_sd.h:
+../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_ll_sdmmc.h:
+../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_ll_dlyb.h:
+../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_sd_ex.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_spi_ex.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart.h:

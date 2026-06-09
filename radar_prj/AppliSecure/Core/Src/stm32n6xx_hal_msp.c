@@ -90,6 +90,109 @@ void HAL_MspInit(void)
 }
 
 /**
+  * @brief SD MSP Initialization
+  * This function configures the hardware resources used in this example
+  * @param hsd: SD handle pointer
+  * @retval None
+  */
+void HAL_SD_MspInit(SD_HandleTypeDef* hsd)
+{
+  GPIO_InitTypeDef GPIO_InitStruct = {0};
+  RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
+  if(hsd->Instance==SDMMC2)
+  {
+    /* USER CODE BEGIN SDMMC2_MspInit 0 */
+
+    /* USER CODE END SDMMC2_MspInit 0 */
+
+  /** Initializes the peripherals clock
+  */
+    PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_SDMMC2;
+    PeriphClkInitStruct.Sdmmc2ClockSelection = RCC_SDMMC2CLKSOURCE_HCLK;
+    if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+    {
+      Error_Handler();
+    }
+
+    /* Peripheral clock enable */
+    __HAL_RCC_SDMMC2_CLK_ENABLE();
+
+    __HAL_RCC_GPIOC_CLK_ENABLE();
+    __HAL_RCC_GPIOE_CLK_ENABLE();
+    /**SDMMC2 GPIO Configuration
+    PC4     ------> SDMMC2_D0
+    PC5     ------> SDMMC2_D1
+    PC0     ------> SDMMC2_D2
+    PC2     ------> SDMMC2_CK
+    PE4     ------> SDMMC2_D3
+    PC3     ------> SDMMC2_CMD
+    */
+    GPIO_InitStruct.Pin = SD_D0_Pin|SD_D1_Pin|SD_D2_Pin|SD_CMD_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    GPIO_InitStruct.Alternate = GPIO_AF11_SDMMC2;
+    HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = SD_CK_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+    GPIO_InitStruct.Alternate = GPIO_AF11_SDMMC2;
+    HAL_GPIO_Init(SD_CK_GPIO_Port, &GPIO_InitStruct);
+
+    GPIO_InitStruct.Pin = SD_D3_Pin;
+    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+    GPIO_InitStruct.Pull = GPIO_NOPULL;
+    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_MEDIUM;
+    GPIO_InitStruct.Alternate = GPIO_AF11_SDMMC2;
+    HAL_GPIO_Init(SD_D3_GPIO_Port, &GPIO_InitStruct);
+
+    /* USER CODE BEGIN SDMMC2_MspInit 1 */
+
+    /* USER CODE END SDMMC2_MspInit 1 */
+
+  }
+
+}
+
+/**
+  * @brief SD MSP De-Initialization
+  * This function freeze the hardware resources used in this example
+  * @param hsd: SD handle pointer
+  * @retval None
+  */
+void HAL_SD_MspDeInit(SD_HandleTypeDef* hsd)
+{
+  if(hsd->Instance==SDMMC2)
+  {
+    /* USER CODE BEGIN SDMMC2_MspDeInit 0 */
+
+    /* USER CODE END SDMMC2_MspDeInit 0 */
+    /* Peripheral clock disable */
+    __HAL_RCC_SDMMC2_CLK_DISABLE();
+
+    /**SDMMC2 GPIO Configuration
+    PC4     ------> SDMMC2_D0
+    PC5     ------> SDMMC2_D1
+    PC0     ------> SDMMC2_D2
+    PC2     ------> SDMMC2_CK
+    PE4     ------> SDMMC2_D3
+    PC3     ------> SDMMC2_CMD
+    */
+    HAL_GPIO_DeInit(GPIOC, SD_D0_Pin|SD_D1_Pin|SD_D2_Pin|SD_CK_Pin
+                          |SD_CMD_Pin);
+
+    HAL_GPIO_DeInit(SD_D3_GPIO_Port, SD_D3_Pin);
+
+    /* USER CODE BEGIN SDMMC2_MspDeInit 1 */
+
+    /* USER CODE END SDMMC2_MspDeInit 1 */
+  }
+
+}
+
+/**
   * @brief SPI MSP Initialization
   * This function configures the hardware resources used in this example
   * @param hspi: SPI handle pointer

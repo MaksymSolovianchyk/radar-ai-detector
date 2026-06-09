@@ -1,0 +1,2 @@
+../Core/Src/sd_card.c:24:6:SD_Card_Init	2
+../Core/Src/sd_card.c:46:6:SD_Card_IsPresent	1

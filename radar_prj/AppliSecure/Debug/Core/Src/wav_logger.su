@@ -1,0 +1,10 @@
+../Core/Src/wav_logger.c:58:13:u16_le	16	static
+../Core/Src/wav_logger.c:64:13:u32_le	16	static
+../Core/Src/wav_logger.c:72:13:build_header	24	static
+../Core/Src/wav_logger.c:94:19:flush_buf	16	static
+../Core/Src/wav_logger.c:106:12:WAV_Logger_Init	88	static
+../Core/Src/wav_logger.c:152:12:WAV_Logger_Write	32	static
+../Core/Src/wav_logger.c:192:6:WAV_Logger_Close	64	static
+../Core/Src/wav_logger.c:214:6:WAV_Logger_IsReady	4	static
+../Core/Src/wav_logger.c:215:10:WAV_Logger_GetSampleCount	4	static
+../Core/Src/wav_logger.c:216:13:WAV_Logger_GetFilename	4	static

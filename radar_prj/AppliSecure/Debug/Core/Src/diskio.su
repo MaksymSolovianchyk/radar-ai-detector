@@ -1,0 +1,6 @@
+../Core/Src/diskio.c:17:16:wait_ready	16	static
+../Core/Src/diskio.c:31:9:disk_status	16	static
+../Core/Src/diskio.c:40:9:disk_initialize	16	static
+../Core/Src/diskio.c:49:9:disk_read	32	static
+../Core/Src/diskio.c:64:9:disk_write	32	static
+../Core/Src/diskio.c:79:9:disk_ioctl	56	static
