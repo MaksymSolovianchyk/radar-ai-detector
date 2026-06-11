@@ -1,5 +1,5 @@
 Drivers/STM32N6xx_HAL_Driver/stm32n6xx_hal_rcc.o: \
- D:/radar-ai-detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c \
+ /Users/maksym/Documents/graduation-internship/radar-ai-detector/radar_prj/Drivers/STM32N6xx_HAL_Driver/Src/stm32n6xx_hal_rcc.c \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h \
  ../Core/Inc/stm32n6xx_hal_conf.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_rcc.h \
