@@ -1,31 +1,11 @@
-/*
- * radar_features.c
- *
- * Computes Doppler-domain radar features from the fftshifted magnitude
- * array produced by fft.c / FFT_Process().
- *
- * After FFT_Process() the magnitude array is fftshifted:
- *   index 0           -> most-negative Doppler (max receding)
- *   index num_bins/2  -> DC (0 Hz, static targets)
- *   index num_bins-1  -> most-positive Doppler (max approaching)
- *
- * We exclude a narrow DC guard band (DC_GUARD_BINS on each side of DC)
- * matching the guard already used in FFT_GetPeakFrequency().
- */
-
 #include "radar_features.h"
 #include <math.h>
 #include <stdio.h>
 #include <string.h>
-
-/* Number of bins around DC to treat as static / suppress.
- * Must match DC_GUARD_BINS in fft.c (currently 2). */
 #define RF_DC_GUARD  2u
 
-/* Small value to avoid division by zero. */
 #define RF_EPS       1e-6f
 
-/* ------------------------------------------------------------------ */
 void RadarFeatures_Compute(const float     *doppler_mag,
                            uint32_t         num_bins,
                            float            bin_hz,
@@ -34,15 +14,7 @@ void RadarFeatures_Compute(const float     *doppler_mag,
     if (!doppler_mag || !out || num_bins < 4u) return;
 
     const uint32_t dc = num_bins / 2u;   /* DC bin index after fftshift */
-
-    /* Zero the output struct first. */
     memset(out, 0, sizeof(RadarFeatures_t));
-
-    /* --------------------------------------------------------------- *
-     * Single pass: accumulate energies, track peaks, weighted sums.   *
-     * Receding  = bins [0 .. dc-guard-1]  (negative Doppler)          *
-     * Approaching = bins [dc+guard+1 .. num_bins-1] (positive Doppler)*
-     * --------------------------------------------------------------- */
     float weighted_freq_sum = 0.0f;
     float weight_sum        = 0.0f;
     float peak_mag          = 0.0f;
@@ -62,27 +34,23 @@ void RadarFeatures_Compute(const float     *doppler_mag,
 
         out->total_energy += mag;
 
-        if (k > dc)   /* approaching (positive Doppler) */
+        if (k > dc) 
         {
             out->approaching_energy += mag;
             if (mag > out->max_approach_peak)
                 out->max_approach_peak = mag;
         }
-        else          /* receding (negative Doppler) */
+        else  
         {
             out->receding_energy += mag;
             if (mag > out->max_recede_peak)
                 out->max_recede_peak = mag;
         }
-
-        /* Track global peak for peak_doppler */
         if (mag > peak_mag)
         {
             peak_mag = mag;
             peak_bin = k;
         }
-
-        /* Accumulate for centre-of-mass */
         weighted_freq_sum += freq_hz * mag;
         weight_sum        += mag;
     }
@@ -128,7 +96,6 @@ void RadarFeatures_Compute(const float     *doppler_mag,
     }
 }
 
-/* ------------------------------------------------------------------ */
 void RadarFeatures_Print(UART_HandleTypeDef    *huart,
                          const RadarFeatures_t  *features)
 {
@@ -149,9 +116,6 @@ void RadarFeatures_Print(UART_HandleTypeDef    *huart,
                           HAL_MAX_DELAY);
     }
     frame_count++;
-
-    /* Build data line – snprintf into a local buffer.
-     * Max line ~200 chars; stack usage is acceptable in main context. */
     char buf[220];
     int len = snprintf(buf, sizeof(buf),
         "%lu,%.2f,%.2f,%.4f,%.2f,%.2f,%.2f,%.2f,%.4f,%.2f,%.2f\r\n",
