@@ -10,10 +10,8 @@
 #include "radar.h"
 #include "ads131m0x.h"
 #include "fft.h"
-<<<<<<< HEAD
 #include "radar_features.h"
-=======
->>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d
+
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PD */
@@ -67,17 +65,12 @@ int main(void)
     /* ── Step 1: initialise ADC first so it releases MISO ───────────────── */
     ADS_Init();
     UartStartReceive();
-<<<<<<< HEAD
-
-=======
     FFT_Init();
->>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN WHILE */
     while (1)
         {
-<<<<<<< HEAD
 
                 if (FFT_IsReady())
                 {
@@ -102,8 +95,7 @@ int main(void)
             {
                 __disable_irq();
 
-=======
-            if (adc_data_ready)
+    if (adc_data_ready)
             {
                 adc_data_ready = false;
 
@@ -139,7 +131,6 @@ int main(void)
             {
                 __disable_irq();
 
->>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d
                 uint8_t local_cmd[3];
                 local_cmd[0] = cmd_buffer[0];
                 local_cmd[1] = cmd_buffer[1];
