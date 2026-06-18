@@ -34,7 +34,11 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart.h \
  ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal_uart_ex.h \
  ../Core/Inc/radar.h ../Core/Inc/ads131m0x.h ../Core/Inc/radar.h \
+<<<<<<< HEAD
  ../Core/Inc/fft.h ../Core/Inc/radar_features.h
+=======
+ ../Core/Inc/fft.h
+>>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d
 ../Core/Inc/main.h:
 ../../Drivers/STM32N6xx_HAL_Driver/Inc/stm32n6xx_hal.h:
 ../Core/Inc/stm32n6xx_hal_conf.h:
@@ -74,4 +78,7 @@ Core/Src/main.o: ../Core/Src/main.c ../Core/Inc/main.h \
 ../Core/Inc/ads131m0x.h:
 ../Core/Inc/radar.h:
 ../Core/Inc/fft.h:
+<<<<<<< HEAD
 ../Core/Inc/radar_features.h:
+=======
+>>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d

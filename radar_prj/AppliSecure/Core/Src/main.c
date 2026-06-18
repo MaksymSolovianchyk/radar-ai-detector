@@ -10,7 +10,10 @@
 #include "radar.h"
 #include "ads131m0x.h"
 #include "fft.h"
+<<<<<<< HEAD
 #include "radar_features.h"
+=======
+>>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PD */
@@ -35,6 +38,8 @@ extern volatile uint8_t  cmd_buffer[3];
 extern volatile int      commandflag;
 extern volatile bool     adc_data_ready;
 extern volatile bool     adcready;
+
+volatile uint32_t dma_transfer_count = 0;
 /* USER CODE END PV */
 
 /* Private function prototypes -----------------------------------------------*/
@@ -58,14 +63,21 @@ int main(void)
     SystemIsolation_Config();
 
     /* USER CODE BEGIN 2 */
+
+    /* ── Step 1: initialise ADC first so it releases MISO ───────────────── */
     ADS_Init();
     UartStartReceive();
+<<<<<<< HEAD
 
+=======
+    FFT_Init();
+>>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN WHILE */
     while (1)
         {
+<<<<<<< HEAD
 
                 if (FFT_IsReady())
                 {
@@ -90,6 +102,44 @@ int main(void)
             {
                 __disable_irq();
 
+=======
+            if (adc_data_ready)
+            {
+                adc_data_ready = false;
+
+                int32_t raw_ch0 = ((int32_t)ADC_Buffer.rx[3] << 16)
+                                | ((int32_t)ADC_Buffer.rx[4] << 8)
+                                | ((int32_t)ADC_Buffer.rx[5]);
+
+                if (raw_ch0 & 0x800000)
+                    raw_ch0 -= 0x1000000;
+
+                int32_t raw_ch1 = ((int32_t)ADC_Buffer.rx[6] << 16)
+                                | ((int32_t)ADC_Buffer.rx[7] << 8)
+                                | ((int32_t)ADC_Buffer.rx[8]);
+
+                if (raw_ch1 & 0x800000)
+                    raw_ch1 -= 0x1000000;
+
+                float ch0_v = (float)raw_ch0 * ADC_STEP;
+                float ch1_v = (float)raw_ch1 * ADC_STEP;
+
+                char msg[80];
+                int len = snprintf(msg, sizeof(msg),
+                                   "CH0: %8ld %+.6fV | CH1: %8ld %+.6fV\r\n",
+                                   raw_ch0,
+                                   ch0_v,
+                                   raw_ch1,
+                                   ch1_v);
+
+                HAL_UART_Transmit(&huart1, (uint8_t*)msg, len, 100);
+            }
+
+            if (commandflag)
+            {
+                __disable_irq();
+
+>>>>>>> 4d2ac1a6586fd99d736593ef7b227981f5e2f31d
                 uint8_t local_cmd[3];
                 local_cmd[0] = cmd_buffer[0];
                 local_cmd[1] = cmd_buffer[1];
@@ -106,6 +156,7 @@ int main(void)
 }
 
 /* USER CODE BEGIN 4 */
+
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin)
 {
     if (GPIO_Pin == GPIO_PIN_11)
@@ -118,67 +169,152 @@ void HAL_SPI_TxCpltCallback(SPI_HandleTypeDef *hspi)
         HAL_SPI_TX_AdcCallback();
 }
 
+void HAL_SPI_TxRxCpltCallback(SPI_HandleTypeDef *hspi)
+{
+    if (hspi->Instance != SPI5) return;
+
+    uint32_t count = dma_transfer_count++;
+
+    char msg[64];
+    int len = snprintf(msg, sizeof(msg),
+                       "DMA Transfer %lu Complete RX=%02X %02X %02X\r\n",
+                       count,
+                       ADC_Buffer.rx[0],
+                       ADC_Buffer.rx[1],
+                       ADC_Buffer.rx[2]);
+    //HAL_UART_Transmit(&huart1, (uint8_t*)msg, len, 100);
+}
+
 void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart)
 {
     if (huart->Instance == USART1)
         FFT_TxCompleteCallback();
 }
 
+/* ── CS toggle test ──────────────────────────────────────────────────────────
+ * The board has a hardware inverter between the STM32 GPIO and the ADC CS pin.
+ * So GPIO_PIN_SET  → ODR=1 → physical line LOW  → ADC CS active
+ *    GPIO_PIN_RESET → ODR=0 → physical line HIGH → ADC CS inactive
+ *
+ * We print both ODR and physical IDR so the inversion is clearly visible.
+ * ─────────────────────────────────────────────────────────────────────────── */
 void Test_CS_Toggle(void)
 {
-    char buf[50];
+    char buf[100];
 
-    HAL_UART_Transmit(&huart1, (uint8_t*)"CS TEST START\r\n", 15, HAL_MAX_DELAY);
+    HAL_UART_Transmit(&huart1,
+                      (uint8_t*)"CS TEST START\r\n",
+                      15, HAL_MAX_DELAY);
 
-    GPIO_PinState s = HAL_GPIO_ReadPin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin);
-    sprintf(buf, "CS initial: %d (1=HIGH)\r\n", s);
+    #define CS_ODR() ((ADC_SPI_CS1_GPIO_Port->ODR & ADC_SPI_CS1_Pin) ? 1u : 0u)
+    #define CS_IDR() ((ADC_SPI_CS1_GPIO_Port->IDR & ADC_SPI_CS1_Pin) ? 1u : 0u)
+
+    /* Initial state */
+    snprintf(buf, sizeof(buf),
+             "CS INITIAL   ODR=%u  IDR=%u\r\n", CS_ODR(), CS_IDR());
     HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
 
+    /* Write SET */
     HAL_GPIO_WritePin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin, GPIO_PIN_SET);
-    HAL_Delay(100);
-
-    s = HAL_GPIO_ReadPin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin);
-    sprintf(buf, "CS HIGH: %d\r\n", s);
+    HAL_Delay(10);
+    snprintf(buf, sizeof(buf),
+             "After PIN_RESET   ODR=%u  IDR=%u\r\n", CS_ODR(), CS_IDR());
     HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
 
+    /* Write RESET */
     HAL_GPIO_WritePin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin, GPIO_PIN_RESET);
-    HAL_Delay(100);
-
-    s = HAL_GPIO_ReadPin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin);
-    sprintf(buf, "CS LOW: %d\r\n", s);
+    HAL_Delay(10);
+    snprintf(buf, sizeof(buf),
+             "After PIN_SET ODR=%u  IDR=%u\r\n", CS_ODR(), CS_IDR());
     HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
 
-    HAL_GPIO_WritePin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin, GPIO_PIN_SET);
+    /* Leave CS in inactive state for your hardware:
+     * If IDR=1 when ODR=1 → no inverter, use GPIO_PIN_SET for inactive
+     * If IDR=0 when ODR=1 → inverter present, use GPIO_PIN_RESET for inactive */
+    uint32_t odr_set = CS_ODR();   /* saved from PIN_SET state above? no — re-check */
 
-    HAL_UART_Transmit(&huart1, (uint8_t*)"CS TEST DONE\r\n", 14, HAL_MAX_DELAY);
+    /* Drive SET and check IDR to determine inversion */
+    HAL_GPIO_WritePin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin, GPIO_PIN_SET);
+    HAL_Delay(5);
+    uint32_t idr_when_set = CS_IDR();
+
+    if (idr_when_set == 1)
+    {
+        /* No inverter: PIN_SET = line HIGH = CS inactive — leave as SET */
+        HAL_UART_Transmit(&huart1,
+            (uint8_t*)"CS config: no inverter. PIN_SET=inactive. Left HIGH.\r\n",
+            54, HAL_MAX_DELAY);
+    }
+    else
+    {
+        /* Inverter present: PIN_SET = line LOW = CS active — switch to RESET */
+        HAL_GPIO_WritePin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin, GPIO_PIN_RESET);
+        HAL_UART_Transmit(&huart1,
+            (uint8_t*)"CS config: INVERTER detected. PIN_RESET=inactive. Left LOW ODR.\r\n",
+            65, HAL_MAX_DELAY);
+    }
+
+    #undef CS_ODR
+    #undef CS_IDR
+
+    HAL_UART_Transmit(&huart1,
+                      (uint8_t*)"CS TEST DONE\r\n",
+                      14, HAL_MAX_DELAY);
 }
 
+/* ── MISO test ───────────────────────────────────────────────────────────────
+ * Run AFTER ADS_Init() so the ADC has been reset and is not driving MISO.
+ * With CS held HIGH (inactive) the ADC tri-states its MISO output.
+ * PULLDOWN should read 0, PULLUP should read 1.
+ * ─────────────────────────────────────────────────────────────────────────── */
 void Test_MISO(void)
 {
-    char buf[60];
+    char buf[80];
+    GPIO_PinState pin_state;
 
     HAL_UART_Transmit(&huart1, (uint8_t*)"MISO TEST START\r\n", 17, HAL_MAX_DELAY);
 
+    /* Make sure CS is in inactive state so ADC tri-states MISO */
+    HAL_GPIO_WritePin(ADC_SPI_CS1_GPIO_Port, ADC_SPI_CS1_Pin, GPIO_PIN_SET);
+    HAL_Delay(5);
+
     GPIO_InitTypeDef GPIO_InitStruct = {0};
 
+    /* Test 1: pulldown — free line should read 0 */
     GPIO_InitStruct.Pin  = GPIO_PIN_8;
     GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
     GPIO_InitStruct.Pull = GPIO_PULLDOWN;
     HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
-
     HAL_Delay(10);
-
-    sprintf(buf, "MISO PULLDOWN: %d\r\n", HAL_GPIO_ReadPin(GPIOH, GPIO_PIN_8));
+    pin_state = HAL_GPIO_ReadPin(GPIOH, GPIO_PIN_8);
+    snprintf(buf, sizeof(buf),
+             "MISO PULLDOWN: %d (expect 0 if ADC tri-stated)\r\n", pin_state);
     HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
 
+    /* Test 2: pullup — free line should read 1 */
     GPIO_InitStruct.Pull = GPIO_PULLUP;
     HAL_GPIO_Init(GPIOH, &GPIO_InitStruct);
-
     HAL_Delay(10);
-
-    sprintf(buf, "MISO PULLUP: %d\r\n", HAL_GPIO_ReadPin(GPIOH, GPIO_PIN_8));
+    pin_state = HAL_GPIO_ReadPin(GPIOH, GPIO_PIN_8);   /* read ONCE, check ONCE */
+    snprintf(buf, sizeof(buf),
+             "MISO PULLUP:   %d (expect 1 if ADC tri-stated)\r\n", pin_state);
     HAL_UART_Transmit(&huart1, (uint8_t*)buf, strlen(buf), HAL_MAX_DELAY);
 
+    /* Verdict based on the captured value */
+    if (pin_state == GPIO_PIN_RESET)
+    {
+        HAL_UART_Transmit(&huart1,
+            (uint8_t*)"WARNING: MISO stuck LOW — ADC driving line or hardware short\r\n",
+            62, HAL_MAX_DELAY);
+    }
+    else
+    {
+        HAL_UART_Transmit(&huart1,
+            (uint8_t*)"MISO OK — line is free (ADC tri-stated with CS inactive)\r\n",
+            58, HAL_MAX_DELAY);
+    }
+
+    /* Restore MISO as SPI AF pin */
     GPIO_InitStruct.Pin       = GPIO_PIN_8;
     GPIO_InitStruct.Mode      = GPIO_MODE_AF_PP;
     GPIO_InitStruct.Pull      = GPIO_NOPULL;
@@ -195,16 +331,12 @@ void Test_MISO(void)
 static void MX_GPDMA1_Init(void)
 {
     __HAL_RCC_GPDMA1_CLK_ENABLE();
-
     HAL_NVIC_SetPriority(GPDMA1_Channel0_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(GPDMA1_Channel0_IRQn);
-
     HAL_NVIC_SetPriority(GPDMA1_Channel1_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(GPDMA1_Channel1_IRQn);
-
     HAL_NVIC_SetPriority(GPDMA1_Channel2_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(GPDMA1_Channel2_IRQn);
-
     HAL_NVIC_SetPriority(GPDMA1_Channel3_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(GPDMA1_Channel3_IRQn);
 }
@@ -233,9 +365,7 @@ static void MX_SPI5_Init(void)
     hspi5.Init.IOSwap                  = SPI_IO_SWAP_DISABLE;
     hspi5.Init.ReadyMasterManagement   = SPI_RDY_MASTER_MANAGEMENT_INTERNALLY;
     hspi5.Init.ReadyPolarity           = SPI_RDY_POLARITY_HIGH;
-
-    if (HAL_SPI_Init(&hspi5) != HAL_OK)
-        Error_Handler();
+    if (HAL_SPI_Init(&hspi5) != HAL_OK) Error_Handler();
 }
 
 static void MX_USART1_UART_Init(void)
@@ -251,18 +381,10 @@ static void MX_USART1_UART_Init(void)
     huart1.Init.OneBitSampling         = UART_ONE_BIT_SAMPLE_DISABLE;
     huart1.Init.ClockPrescaler         = UART_PRESCALER_DIV1;
     huart1.AdvancedInit.AdvFeatureInit = UART_ADVFEATURE_NO_INIT;
-
-    if (HAL_UART_Init(&huart1) != HAL_OK)
-        Error_Handler();
-
-    if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK)
-        Error_Handler();
-
-    if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK)
-        Error_Handler();
-
-    if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK)
-        Error_Handler();
+    if (HAL_UART_Init(&huart1) != HAL_OK)                          Error_Handler();
+    if (HAL_UARTEx_SetTxFifoThreshold(&huart1, UART_TXFIFO_THRESHOLD_1_8) != HAL_OK) Error_Handler();
+    if (HAL_UARTEx_SetRxFifoThreshold(&huart1, UART_RXFIFO_THRESHOLD_1_8) != HAL_OK) Error_Handler();
+    if (HAL_UARTEx_DisableFifoMode(&huart1) != HAL_OK) Error_Handler();
 }
 
 static void MX_GPIO_Init(void)
@@ -306,19 +428,15 @@ static void MX_GPIO_Init(void)
 static void SystemIsolation_Config(void)
 {
     __HAL_RCC_RIFSC_CLK_ENABLE();
-
     if (HAL_DMA_ConfigChannelAttributes(&handle_GPDMA1_Channel0,
             DMA_CHANNEL_SEC | DMA_CHANNEL_PRIV | DMA_CHANNEL_SRC_SEC | DMA_CHANNEL_DEST_SEC) != HAL_OK)
         Error_Handler();
-
     if (HAL_DMA_ConfigChannelAttributes(&handle_GPDMA1_Channel1,
             DMA_CHANNEL_SEC | DMA_CHANNEL_PRIV | DMA_CHANNEL_SRC_SEC | DMA_CHANNEL_DEST_SEC) != HAL_OK)
         Error_Handler();
-
     if (HAL_DMA_ConfigChannelAttributes(&handle_GPDMA1_Channel2,
             DMA_CHANNEL_SEC | DMA_CHANNEL_PRIV | DMA_CHANNEL_SRC_SEC | DMA_CHANNEL_DEST_SEC) != HAL_OK)
         Error_Handler();
-
     if (HAL_DMA_ConfigChannelAttributes(&handle_GPDMA1_Channel3,
             DMA_CHANNEL_SEC | DMA_CHANNEL_PRIV | DMA_CHANNEL_SRC_SEC | DMA_CHANNEL_DEST_SEC) != HAL_OK)
         Error_Handler();
@@ -327,14 +445,9 @@ static void SystemIsolation_Config(void)
 void Error_Handler(void)
 {
     __disable_irq();
-
-    while (1)
-    {
-    }
+    while (1) {}
 }
 
 #ifdef USE_FULL_ASSERT
-void assert_failed(uint8_t *file, uint32_t line)
-{
-}
+void assert_failed(uint8_t *file, uint32_t line) {}
 #endif

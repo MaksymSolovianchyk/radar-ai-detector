@@ -652,7 +652,7 @@ bool readData(adc_channel_data *DataStruct)
     // Send NULL word, receive response word
     for (i = 0; i < bytesPerWord; i++)
     {
-        dataRx[i] = spiSendReceiveByte(0x00);
+        //dataRx[i] = spiSendReceiveByte(0x00);
     }
     DataStruct->response = combineBytes(dataRx[0], dataRx[1]);
 
@@ -666,7 +666,7 @@ bool readData(adc_channel_data *DataStruct)
     // Send 2nd word, receive channel 1 data
     for (i = 0; i < bytesPerWord; i++)
     {
-        dataRx[i] = spiSendReceiveByte(crcTx[i]);
+       // dataRx[i] = spiSendReceiveByte(crcTx[i]);
     }
     DataStruct->channel0 = signExtend(&dataRx[0]);
     //crcWord = calculateCRC(&dataRx[0], bytesPerWord, crcWord);
@@ -676,7 +676,7 @@ bool readData(adc_channel_data *DataStruct)
     // Send 3rd word, receive channel 2 data
     for (i = 0; i < bytesPerWord; i++)
     {
-        dataRx[i] = spiSendReceiveByte(0x00);
+        //dataRx[i] = spiSendReceiveByte(0x00);
     }
     DataStruct->channel1 = signExtend(&dataRx[0]);
     //crcWord = calculateCRC(&dataRx[0], bytesPerWord, crcWord);
@@ -687,7 +687,7 @@ bool readData(adc_channel_data *DataStruct)
     // Send 4th word, receive channel 3 data
     for (i = 0; i < bytesPerWord; i++)
     {
-        dataRx[i] = spiSendReceiveByte(0x00);
+        //dataRx[i] = spiSendReceiveByte(0x00);
     }
     DataStruct->channel2 = signExtend(&dataRx[0]);
     //crcWord = calculateCRC(&dataRx[0], bytesPerWord, crcWord);
@@ -698,7 +698,7 @@ bool readData(adc_channel_data *DataStruct)
     // Send 5th word, receive channel 4 data
     for (i = 0; i < bytesPerWord; i++)
     {
-        dataRx[i] = spiSendReceiveByte(0x00);
+       // dataRx[i] = spiSendReceiveByte(0x00);
     }
     DataStruct->channel3 = signExtend(&dataRx[0]);
     //crcWord = calculateCRC(&dataRx[0], bytesPerWord, crcWord);
@@ -752,7 +752,7 @@ bool readData(adc_channel_data *DataStruct)
     // Send the next word, receive CRC data
     for (i = 0; i < bytesPerWord; i++)
     {
-        dataRx[i] = spiSendReceiveByte(0x00);
+     //   dataRx[i] = spiSendReceiveByte(0x00);
     }
     DataStruct->crc = combineBytes(dataRx[0], dataRx[1]);
 
