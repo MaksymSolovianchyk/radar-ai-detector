@@ -9,6 +9,8 @@
 #include <string.h>
 #include "radar.h"
 #include "ads131m0x.h"
+#include "fft.h"
+#include "radar_features.h"
 /* USER CODE END Includes */
 
 /* USER CODE BEGIN PD */
@@ -59,64 +61,47 @@ int main(void)
     ADS_Init();
     UartStartReceive();
 
-    char banner[] = "\r\n=== STM32N6 Radar UART Stream ===\r\n";
-    HAL_UART_Transmit(&huart1, (uint8_t*)banner, sizeof(banner) - 1, 200);
-
-    char go[] = "ADC streaming started...\r\n\r\n";
-    HAL_UART_Transmit(&huart1, (uint8_t*)go, sizeof(go) - 1, 200);
     /* USER CODE END 2 */
 
     /* USER CODE BEGIN WHILE */
     while (1)
-    {
-        if (adc_data_ready)
         {
-            adc_data_ready = false;
 
-            int32_t raw_ch0 = ((int32_t)ADC_Buffer.rx[3] << 16)
-                            | ((int32_t)ADC_Buffer.rx[4] << 8)
-                            | ((int32_t)ADC_Buffer.rx[5]);
+                if (FFT_IsReady())
+                {
+                    FFT_Process();
 
-            if (raw_ch0 & 0x800000)
-                raw_ch0 -= 0x1000000;
+                    RadarFeatures_t rf;
+                    RadarFeatures_Compute(FFT_GetMagnitude(),
+                                          FFT_N,
+                                          (float)FFT_FS / (float)FFT_N,
+                                          &rf);
 
-            int32_t raw_ch1 = ((int32_t)ADC_Buffer.rx[6] << 16)
-                            | ((int32_t)ADC_Buffer.rx[7] << 8)
-                            | ((int32_t)ADC_Buffer.rx[8]);
+                    /* CSV line — matches parse_line() in live_infer.py exactly:
+                     * timestamp_ms,f0..f9                                        */
+                    RadarFeatures_Print(&huart1, &rf);
 
-            if (raw_ch1 & 0x800000)
-                raw_ch1 -= 0x1000000;
+                    while (!FFT_TransmitDone()) { __NOP(); }
+                    FFT_Reset();
+                }
 
-            float ch0_v = (float)raw_ch0 * ADC_STEP;
-            float ch1_v = (float)raw_ch1 * ADC_STEP;
 
-            char msg[80];
-            int len = snprintf(msg, sizeof(msg),
-                               "CH0: %8ld %+.6fV | CH1: %8ld %+.6fV\r\n",
-                               raw_ch0,
-                               ch0_v,
-                               raw_ch1,
-                               ch1_v);
+            if (commandflag)
+            {
+                __disable_irq();
 
-            HAL_UART_Transmit(&huart1, (uint8_t*)msg, len, 100);
+                uint8_t local_cmd[3];
+                local_cmd[0] = cmd_buffer[0];
+                local_cmd[1] = cmd_buffer[1];
+                local_cmd[2] = cmd_buffer[2];
+
+                __enable_irq();
+
+                commandflag = 0;
+                CommandHandler(local_cmd);
+            }
+            /* USER CODE END WHILE */
         }
-
-        if (commandflag)
-        {
-            __disable_irq();
-
-            uint8_t local_cmd[3];
-            local_cmd[0] = cmd_buffer[0];
-            local_cmd[1] = cmd_buffer[1];
-            local_cmd[2] = cmd_buffer[2];
-
-            __enable_irq();
-
-            commandflag = 0;
-            CommandHandler(local_cmd);
-        }
-        /* USER CODE END WHILE */
-    }
     /* USER CODE END 3 */
 }
 
